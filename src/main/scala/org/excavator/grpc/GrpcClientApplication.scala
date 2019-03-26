@@ -13,6 +13,11 @@ class GrpcClientApplication(host: String, port: Int) {
 
   def connect() = {
     val channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext.build
+    Runtime.getRuntime.addShutdownHook(new Thread() {
+      override run() {
+        channel.shutdownNow()
+      }
+    })
     client = ProductGrpc.newBlockingStub(channel)
   }
 
