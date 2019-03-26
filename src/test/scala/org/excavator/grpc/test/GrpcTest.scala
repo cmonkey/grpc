@@ -22,17 +22,23 @@ class GrpcTest {
     var response = GrpcTest.client.createReview(request)
     logger.info(s"response = ${response}")
     assertTrue(Result.OK == response.getStatus)
+  }
 
-    request = ProductReviewRequest.newBuilder
+  @Test
+  @DisplayName("testProductByFailed_bad_language")
+  def testProductByFailed_bad_language() = {
+
+    val request = ProductReviewRequest.newBuilder
       .setReview("F*ck product")
       .setProductId("012345678")
       .setReviewerEmail("42.codemonkey at gmail.com")
       .setFiveStarRating(5)
       .build
 
-    response = GrpcTest.client.createReview(request)
+    val response = GrpcTest.client.createReview(request)
     logger.info(s"response = ${response}")
     assertTrue(Result.FAILED_BAD_LANGUAGE == response.getStatus)
+  }
 
     request = ProductReviewRequest.newBuilder
       .setReview("Bad product!")
