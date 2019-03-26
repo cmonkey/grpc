@@ -17,6 +17,7 @@
         <scala.major-version>2.12</scala.major-version>
         <scala.version>${scala.major-version}.8</scala.version>
         <alchim31.scala.plugin>4.0.1</alchim31.scala.plugin>
+        <junit-jupiter.version>5.4.0</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,23 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-testing</artifactId>
             <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit-jupiter.version}</version>
         </dependency>
     </dependencies>
 <build>
