@@ -40,20 +40,24 @@ class GrpcTest {
     assertTrue(Result.FAILED_BAD_LANGUAGE == response.getStatus)
   }
 
-    request = ProductReviewRequest.newBuilder
+  @Test
+  @DisplayName("testProductByFailed_invalid_score")
+  def testProductByFailed_invalid_socre() = {
+
+    val request = ProductReviewRequest.newBuilder
       .setReview("Bad product!")
       .setProductId("EAN132069854")
       .setReviewerEmail("42.codemonkey at gmail.com")
       .setFiveStarRating(-5)
       .build
 
-    response = GrpcTest.client.createReview(request)
+    val response = GrpcTest.client.createReview(request)
     logger.info(s"response = ${response}")
     assertTrue(Result.FAILED_INVALID_SCORE == response.getStatus)
   }
 }
 
-object GrpcTest{
+object GrpcTest {
   var client: GrpcClientApplication = null
 
   @BeforeAll
