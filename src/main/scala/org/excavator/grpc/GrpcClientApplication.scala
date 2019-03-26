@@ -1,31 +1,27 @@
 package org.excavator.grpc
 
-import io.grpc.{ManagedChannel, ManagedChannelBuilder}
+import io.grpc.{ManagedChannelBuilder}
+import org.slf4j.LoggerFactory
 
-class GrpcClientApplication {
+class GrpcClientApplication(host: String, port: Int) {
 
-  def start() = {
-    val channel = ManagedChannelBuilder.forAddress("localhost", 53000).usePlaintext.build
+  val logger = LoggerFactory.getLogger(classOf[GrpcClientApplication])
 
-    val client = ProductGrpc.newBlockingStub(channel)
+  var client: ProductGrpc.ProductBlockingStub = _
 
-    val review = ProductReviewRequest.newBuilder.setReview("cmonkey").setProductId("0123456789").setReviewerEmail("42.codemonkey at gmail.com").setFiveStarRating(5).build
+  connect()
 
-    var result = client.createOrUpdateReview(review)
+  def connect() = {
+    val channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext.build
+    client = ProductGrpc.newBlockingStub(channel)
+  }
 
-    System.out.println("result of posing review ; " + result.getStatus.name)
+  def createReview(request: ProductReviewRequest) = {
+    val response = client.createOrUpdateReview(request)
 
-    val badLangReview = ProductReviewRequest.newBuilder.setReview("F*ck product").setProductId("012345678").setReviewerEmail("42.codemonkey at gmail.com").setFiveStarRating(5).build
+    logger.info(s"createReview response = ${response}")
 
-    result = client.createOrUpdateReview(badLangReview)
-
-    System.out.println("result of posting review: " + result.getStatus.name)
-
-    val invalidRatingReview = ProductReviewRequest.newBuilder.setReview("Bad product!").setProductId("EAN132069854").setReviewerEmail("42.codemonkey at gmail.com").setFiveStarRating(-5).build
-
-    result = client.createOrUpdateReview(invalidRatingReview)
-
-    System.out.println("Result of posting review: " + result.getStatus.name)
+    response
   }
 
 }
