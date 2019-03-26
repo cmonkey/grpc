@@ -1,7 +1,7 @@
 package org.excavator.grpc.test
 
 import org.excavator.grpc.{GrpcClientApplication, GrpcServerApplication, ProductReviewRequest, Result}
-import org.junit.jupiter.api.{DisplayName, Test, BeforeAll, AfterAll}
+import org.junit.jupiter.api._
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.slf4j.LoggerFactory
 
@@ -10,6 +10,7 @@ class GrpcTest {
 
   @Test
   @DisplayName("testProductByOK")
+  @RepeatedTest(1000)
   def testProductByOK() = {
 
     var request = ProductReviewRequest.newBuilder
@@ -26,6 +27,7 @@ class GrpcTest {
 
   @Test
   @DisplayName("testProductByFailed_bad_language")
+  @RepeatedTest(1000)
   def testProductByFailed_bad_language() = {
 
     val request = ProductReviewRequest.newBuilder
@@ -42,6 +44,7 @@ class GrpcTest {
 
   @Test
   @DisplayName("testProductByFailed_invalid_score")
+  @RepeatedTest(1000)
   def testProductByFailed_invalid_socre() = {
 
     val request = ProductReviewRequest.newBuilder
