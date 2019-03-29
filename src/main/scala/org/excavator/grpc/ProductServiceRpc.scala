@@ -44,7 +44,7 @@ class ProductServiceRpc extends ProductGrpc.ProductImplBase{
     }).scheduleWithFixedDelay(() => {
       logger.info(s"thread name = ${Thread.currentThread().getName}")
       responseObserver.onNext(createResponse(Result.OK))
-    }, 1, 1, TimeUnit.MICROSECONDS)
+    }, 1, 1, TimeUnit.MILLISECONDS)
 
     //responseObserver.onCompleted()
 
