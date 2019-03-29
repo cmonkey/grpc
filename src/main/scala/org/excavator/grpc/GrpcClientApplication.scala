@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory
 class GrpcClientApplication(host: String, port: Int) {
 
   val logger = LoggerFactory.getLogger(classOf[GrpcClientApplication])
-  val atomicInteger = new AtomicInteger(0)
-
   var blockingClient: ProductGrpc.ProductBlockingStub = _
   var client: ProductGrpc.ProductStub = _
 
@@ -34,7 +32,7 @@ class GrpcClientApplication(host: String, port: Int) {
     response
   }
 
-  def responseStream(request: ProductReviewRequest) = {
+  def responseStream(request: ProductReviewRequest, atomicInteger: AtomicInteger) = {
     client.getResponse(request, new StreamObserver[ProductReviewResponse] {
       override def onNext(value: ProductReviewResponse): Unit = {
         logger.info(s"next response = ${value.getStatus.name()}")
@@ -42,11 +40,11 @@ class GrpcClientApplication(host: String, port: Int) {
       }
 
       override def onCompleted(): Unit = {
-        logger.info(s"stream onCompleted and count = ${atomicInteger.getAndSet(0)}")
+        logger.info(s"stream onCompleted and count = ${atomicInteger.get()}")
       }
 
       override def onError(t: Throwable): Unit = {
-        logger.error(s"stream error = ${t}")
+        logger.error(s"stream error = ${t} and count = ${atomicInteger.get()}")
       }
     })
   }
