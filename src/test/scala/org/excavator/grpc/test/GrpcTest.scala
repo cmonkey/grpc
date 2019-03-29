@@ -55,7 +55,7 @@ class GrpcTest {
       .build
 
     val response = GrpcTest.client.createReview(request)
-    logger.info(s"response = ${response}")
+    logger.info(s"request = ${request} response = ${response}")
     assertTrue(Result.FAILED_INVALID_SCORE == response.getStatus)
   }
 }
