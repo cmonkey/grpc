@@ -1,5 +1,7 @@
 package org.excavator.grpc.test
 
+import java.util.concurrent.TimeUnit
+
 import org.excavator.grpc.{GrpcClientApplication, GrpcServerApplication, ProductReviewRequest, Result}
 import org.junit.jupiter.api._
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -57,6 +59,21 @@ class GrpcTest {
     val response = GrpcTest.client.createReview(request)
     logger.info(s"request = ${request} response = ${response}")
     assertTrue(Result.FAILED_INVALID_SCORE == response.getStatus)
+  }
+
+  @Test
+  @DisplayName("testStream")
+  //@RepeatedTest(1000)
+  def testStream() = {
+    val request = ProductReviewRequest.newBuilder()
+      .setReview("stream product")
+      .setProductId("1234567")
+      .setReviewerEmail("42.codemonkey at gmail.com")
+      .setFiveStarRating(100)
+      .build()
+
+    GrpcTest.client.responseStream(request)
+    TimeUnit.SECONDS.sleep(100)
   }
 }
 
