@@ -1,13 +1,16 @@
 package org.excavator.grpc
 
-import io.grpc.{ManagedChannelBuilder}
+import java.util.concurrent.atomic.AtomicInteger
+
+import io.grpc.ManagedChannelBuilder
+import io.grpc.stub.StreamObserver
 import org.slf4j.LoggerFactory
 
 class GrpcClientApplication(host: String, port: Int) {
 
   val logger = LoggerFactory.getLogger(classOf[GrpcClientApplication])
-
-  var client: ProductGrpc.ProductBlockingStub = _
+  var blockingClient: ProductGrpc.ProductBlockingStub = _
+  var client: ProductGrpc.ProductStub = _
 
   connect()
 
@@ -17,15 +20,33 @@ class GrpcClientApplication(host: String, port: Int) {
       override def run(): Unit =
         channel.shutdownNow()
     })
-    client = ProductGrpc.newBlockingStub(channel)
+    blockingClient = ProductGrpc.newBlockingStub(channel)
+    client = ProductGrpc.newStub(channel)
   }
 
   def createReview(request: ProductReviewRequest) = {
-    val response = client.createOrUpdateReview(request)
+    val response = blockingClient.createOrUpdateReview(request)
 
     logger.info(s"createReview response = ${response}")
 
     response
+  }
+
+  def responseStream(request: ProductReviewRequest, atomicInteger: AtomicInteger) = {
+    client.getResponse(request, new StreamObserver[ProductReviewResponse] {
+      override def onNext(value: ProductReviewResponse): Unit = {
+        logger.info(s"next response = ${value.getStatus.name()}")
+        atomicInteger.incrementAndGet()
+      }
+
+      override def onCompleted(): Unit = {
+        logger.info(s"stream onCompleted and count = ${atomicInteger.get()}")
+      }
+
+      override def onError(t: Throwable): Unit = {
+        logger.error(s"stream error = ${t} and count = ${atomicInteger.get()}")
+      }
+    })
   }
 
 }
