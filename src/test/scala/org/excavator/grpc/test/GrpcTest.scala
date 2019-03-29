@@ -1,6 +1,7 @@
 package org.excavator.grpc.test
 
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 import org.excavator.grpc.{GrpcClientApplication, GrpcServerApplication, ProductReviewRequest, Result}
 import org.junit.jupiter.api._
@@ -63,17 +64,23 @@ class GrpcTest {
 
   @Test
   @DisplayName("testStream")
-  //@RepeatedTest(1000)
+  @RepeatedTest(1000)
   def testStream() = {
+    val fiveStarRating = 100
+
     val request = ProductReviewRequest.newBuilder()
       .setReview("stream product")
       .setProductId("1234567")
       .setReviewerEmail("42.codemonkey at gmail.com")
-      .setFiveStarRating(100)
+      .setFiveStarRating(fiveStarRating)
       .build()
 
-    GrpcTest.client.responseStream(request)
-    TimeUnit.SECONDS.sleep(100)
+    val atomicInteger = new AtomicInteger(0)
+    GrpcTest.client.responseStream(request, atomicInteger)
+    TimeUnit.SECONDS.sleep(10)
+
+    logger.info(s"testStream next responseStream count = ${atomicInteger.get()}")
+    assertTrue(fiveStarRating < atomicInteger.get())
   }
 }
 
