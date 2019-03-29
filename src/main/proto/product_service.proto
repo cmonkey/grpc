@@ -15,6 +15,7 @@ package productservice;
 
 service Product {
   rpc CreateOrUpdateReview (ProductReviewRequest) returns (ProductReviewResponse) {}
+  rpc getResponse (ProductReviewRequest) returns (stream ProductReviewResponse) {}
 }
 
 message ProductReviewRequest {
