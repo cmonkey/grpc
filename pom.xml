@@ -18,6 +18,7 @@
         <scala.version>${scala.major-version}.8</scala.version>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
         <rsocket-rpc.version>0.2.16</rsocket-rpc.version>
+        <scala.version>2.12.8</scala.version>
         <!-- plugin start -->
         <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
         <maven.source.plugin>3.0.1</maven.source.plugin>
@@ -91,6 +92,23 @@
             <artifactId>rsocket-rpc-core</artifactId>
             <version>${rsocket-rpc.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
     </dependencies>
 <build>
     <extensions>
