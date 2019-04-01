@@ -16,9 +16,15 @@
         <grpc.version>1.19.0</grpc.version>
         <scala.major-version>2.12</scala.major-version>
         <scala.version>${scala.major-version}.8</scala.version>
-        <alchim31.scala.plugin>4.0.1</alchim31.scala.plugin>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
         <rsocket-rpc.version>0.2.16</rsocket-rpc.version>
+        <!-- plugin start -->
+        <maven.compiler.plugin>3.8.0</maven.compiler.plugin>
+        <maven.source.plugin>3.0.1</maven.source.plugin>
+		<alchim31.scala.plugin>4.0.1</alchim31.scala.plugin>
+        <maven.surefire.plugin>2.22.1</maven.surefire.plugin>
+        <!-- plugin end -->
+
     </properties>
 
     <dependencies>
@@ -94,71 +100,106 @@
                 <version>1.5.0.Final</version>
             </extension>
         </extensions>
-
-        <plugins>
-            <plugin>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+            <configuration>
+                <encoding>UTF-8</encoding>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.xolstice.maven.plugins</groupId>
+            <artifactId>protobuf-maven-plugin</artifactId>
+            <version>0.5.1</version>
+            <configuration>
+                <protocArtifact>com.google.protobuf:protoc:3.6.1:exe:${os.detected.classifier}</protocArtifact>
+                <pluginId>grpc-java</pluginId>
+                <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.19.0:exe:${os.detected.classifier}</pluginArtifact>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>compile</goal>
+                        <goal>compile-custom</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+            <version>${alchim31.scala.plugin}</version>
+            <executions>
+                <execution>
+                    <id>compile-scala</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>test-compile-scala</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <recompileMode>incremental</recompileMode>
+                <compileOrder>Mixed</compileOrder>
+                <scalaVersion>${scala.version}</scalaVersion>
+                <args>
+                    <arg>-deprecation</arg>
+                </args>
+                <jvmArgs>
+                    <jvmArg>-Xms64m</jvmArg>
+                    <jvmArg>-Xmx1024m</jvmArg>
+                </jvmArgs>
+            </configuration>
+        </plugin>
+        <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>${maven.compiler.plugin}</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <encoding>${project.encoding}</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
+
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.5.1</version>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.6.1:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.19.0:exe:${os.detected.classifier}</pluginArtifact>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin}</version>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>${alchim31.scala.plugin}</version>
-                <executions>
-                    <execution>
-                        <id>compile-scala</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile-scala</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>testCompile</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <recompileMode>incremental</recompileMode>
-                    <compileOrder>Mixed</compileOrder>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <args>
-                        <arg>-deprecation</arg>
-                    </args>
-                    <jvmArgs>
-                        <jvmArg>-Xms64m</jvmArg>
-                        <jvmArg>-Xmx1024m</jvmArg>
-                    </jvmArgs>
+                    <skipSource>true</skipSource>
                 </configuration>
             </plugin>
-        </plugins>
-    </build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin}</version>
+                <configuration>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+
+    </plugins>
+</build>
 </project>
